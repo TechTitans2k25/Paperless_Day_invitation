@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -253,6 +252,21 @@ border-radius:10px;
 .prev-btn{left:20px;}
 .next-btn{right:20px;}
 
+/* --- NEW: LEAF RAIN CSS --- */
+.leaf {
+    position: fixed;
+    top: -50px;
+    pointer-events: none;
+    z-index: 10000; /* Ensure leaves are above the overlay */
+    border-radius: 0 100%; 
+    animation: fall linear forwards;
+}
+
+@keyframes fall {
+    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+}
+
 </style>
 </head>
 
@@ -297,8 +311,6 @@ DEPARTMENT OF INFORMATION TECHNOLOGY
 </div>
 </div>
 
-<!-- IMAGE OVERLAY -->
-
 <div class="image-overlay" id="imageOverlay">
 
 <span class="close-overlay" id="closeOverlay">&times;</span>
@@ -310,8 +322,6 @@ DEPARTMENT OF INFORMATION TECHNOLOGY
 <button class="nav-btn next-btn" id="nextBtn">&#10095;</button>
 
 </div>
-
-<!-- EVENTS -->
 
 <div class="events-container">
 
@@ -374,6 +384,36 @@ noBtn.style.top=y+"px";
 noBtn.addEventListener('mouseover',moveButton);
 noBtn.addEventListener('touchstart',moveButton);
 
+
+/* --- NEW: LEAF RAIN LOGIC --- */
+function createLeafRain() {
+    const leafColors = ['#2ecc71', '#27ae60', '#a2d149', '#145a32'];
+    // Adjust amount based on screen width for performance
+    const leafCount = window.innerWidth < 768 ? 25 : 50; 
+
+    for (let i = 0; i < leafCount; i++) {
+        setTimeout(() => {
+            const leaf = document.createElement('div');
+            leaf.className = 'leaf';
+            
+            const size = Math.random() * 20 + 10;
+            leaf.style.width = size + 'px';
+            leaf.style.height = size + 'px';
+            
+            leaf.style.backgroundColor = leafColors[Math.floor(Math.random() * leafColors.length)];
+            
+            leaf.style.left = Math.random() * 100 + 'vw';
+            const duration = Math.random() * 3 + 2; 
+            leaf.style.animationDuration = duration + 's';
+            
+            document.body.appendChild(leaf);
+
+            setTimeout(() => leaf.remove(), duration * 1000);
+        }, i * 100); 
+    }
+}
+
+
 /* IMAGE OVERLAY */
 
 const overlay=document.getElementById("imageOverlay");
@@ -398,8 +438,9 @@ overlayImage.src=images[index];
 }
 
 yesBtn.onclick=()=>{
-overlay.classList.add("active");
-showImage();
+    overlay.classList.add("active");
+    showImage();
+    createLeafRain(); /* Trigger leaf rain here! */
 };
 
 nextBtn.onclick=()=>{
